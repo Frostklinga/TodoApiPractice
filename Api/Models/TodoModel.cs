@@ -1,6 +1,6 @@
 ﻿namespace Api.Models
 {
-    public record TodoModel(string Title, string Contents, DateTime Created)
+    public record TodoModel(string Title, string Contents, DateTime Created, int id)
     {
     }
 }
