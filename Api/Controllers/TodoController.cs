@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
+using 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Api.Controllers
@@ -8,6 +8,8 @@ namespace Api.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
+        
+        public TodoController() { }
         // GET: api/<TodoController>
         [HttpGet]
         public IEnumerable<string> Get()

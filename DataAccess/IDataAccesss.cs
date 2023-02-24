@@ -1,5 +1,6 @@
 ﻿using Api.Models;
-namespace DataAccess
+
+namespace Api.DataAccess
 {
     public interface IDataAccess
     {
