@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Api.DataAccess
+namespace Api.DataAccess.FileRepository
 {
     public class FileStorage : IDataAccess
     {
