@@ -2,13 +2,14 @@
 
 namespace Api.DataAccess
 {
-    public interface IDataAccess
+    internal interface IDataAccess
     {
         public void Add(TodoModel todo);
-        public TodoModel GetAllTodos();
+        public IEnumerable<TodoModel> GetAllTodos();
         public TodoModel GetById(int id);
         public void Update(TodoModel todo);
         public void Delete(TodoModel todo);
         public void DeleteAll();
+        public List<TodoModel> GetReference();
     }
 }
