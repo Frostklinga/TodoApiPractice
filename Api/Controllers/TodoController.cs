@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Api.DataAccess;
 using Api.DataAccess.FileRepository;
+ 
 using Api.Models;
+using System.Diagnostics;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Api.Controllers
@@ -10,47 +12,62 @@ namespace Api.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
-        DataAccess DataRepository { get; set; }
+        DataAccessBase DataRepository { get; set; }
         public TodoController()
         {
             DataRepository = new FileStorage(); ;
         }
         // GET: api/<TodoController>
-        [HttpGet]
-        public IEnumerable<TodoModel> Get()
+        [HttpGet("GetAllTodos")]
+        public Dictionary<int,TodoModel> Get()
         {
             var todos = DataRepository.GetAllTodos();
             return todos;
         }
 
         // GET api/<TodoController>/5
-        [HttpGet("{todo}")]
-        public string Get(int id)
+        [HttpGet("GetById")]
+        public TodoModel Get(int id)
         {
-            return "value";
-        }
+            try
+            {
+                return DataRepository.GetById(id);
 
-        // POST api/<TodoController>
-        //[HttpPost]
-        //public void Post([FromBody] TodoModel todo)
-        //{
-        //}
-        [HttpPost]
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
+        }
+        [HttpPost("AddTodo")]
         public void AddTodo([FromBody] TodoModel todo)
         {
-            DataRepository.Add(todo);
-        }
+            try
+            {
+                DataRepository.Add(todo);
 
-        // PUT api/<TodoController>/5
-        [HttpPut("{todo}")]
-        public void Put(int id, [FromBody] TodoModel todo)
-        {
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         // DELETE api/<TodoController>/5
-        [HttpDelete("{todo}")]
+        [HttpDelete("DeleteTodo")]
         public void Delete(TodoModel todo)
         {
+            try
+            {
+                DataRepository.Delete(todo);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
     }
 }

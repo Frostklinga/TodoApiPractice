@@ -9,51 +9,51 @@ using System.Runtime.CompilerServices;
 
 namespace Api.DataAccess.FileRepository
 {
-    public class FileStorage : IDataAccess
+    public class FileStorage : DataAccessBase
     {
         readonly string filePath = @".\";
         readonly string storageFileName = "datastore.json";
         readonly string pathAndFilename;
-        List<TodoModel> todoList;
+        Dictionary<int,TodoModel> todoList;
+        int index = 0;
         public FileStorage()
         {
             pathAndFilename = filePath + storageFileName;
-            todoList = new List<TodoModel>();
-        }
-        public void Add(TodoModel todo)
-        {
-            var todoAsJson = JsonConvert.SerializeObject(todo, Formatting.Indented);
-            File.WriteAllText(pathAndFilename, todoAsJson);
+            todoList = new Dictionary<int, TodoModel>();
         }
 
-        public void Delete(TodoModel todo)
+        void SaveToFile() 
         {
-            throw new NotImplementedException();
+            var todosAsJson = JsonConvert.SerializeObject(todoList, Formatting.Indented);
+            File.WriteAllText(pathAndFilename, todosAsJson);
         }
-
-        public void DeleteAll()
+        public override void Add(TodoModel todo)
         {
-            throw new NotImplementedException();
+            index++;
+            todoList.Add(index, todo);
+            SaveToFile();
         }
-
-        public IEnumerable<TodoModel> GetAllTodos()
+        public override void Delete(TodoModel todo)
         {
-            var todo1 = new TodoModel("Todo 1", "The first todo", DateTime.Now, 1);
-            var todo2 = new TodoModel("Todo 2", "The second todo", DateTime.Now.AddDays(1), 2);
-            var todoList = new List<TodoModel>();
-            todoList.Add(todo1);
-            todoList.Add(todo2);
+            todoList.Remove(todo.Id);
+            SaveToFile();
+        }
+        public override void DeleteAll()
+        {
+            File.Delete(pathAndFilename);
+            File.Create(pathAndFilename);
+        }
+        public override Dictionary<int, TodoModel> GetAllTodos()
+        {
             return todoList;
         }
-
-        public TodoModel GetById(int id)
+        public override TodoModel GetById(int id)
         {
-            throw new NotImplementedException();
+            return todoList[id];
         }
-
-        public void Update(TodoModel todo)
+        public override void Update(TodoModel todo)
         {
-            throw new NotImplementedException();
+            todoList[todo.Id] = todo;
         }
     }
 }
