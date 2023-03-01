@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Api.DataAccess;
 using Api.DataAccess.FileRepository;
- 
+using Api.DataAccess.SqlRepository;
 using Api.Models;
 using System.Diagnostics;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -15,7 +15,7 @@ namespace Api.Controllers
         DataAccessBase DataRepository { get; set; }
         public TodoController()
         {
-            DataRepository = new FileStorage(); ;
+            DataRepository = new SqlStorage(); ;
         }
         // GET: api/<TodoController>
         [HttpGet("GetAllTodos")]
