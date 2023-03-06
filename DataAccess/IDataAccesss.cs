@@ -7,7 +7,7 @@ namespace Api.DataAccess
     {
         public void Add(TodoModel todo);
         public Dictionary<int, TodoModel> GetAllTodos();
-        public TodoModel GetById(int id);
+        public TodoModel ?GetById(int id);
         public void Update(TodoModel todo);
         public void Delete(TodoModel todo);
         public void DeleteAll();

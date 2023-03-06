@@ -32,7 +32,6 @@ namespace Api.Controllers
             try
             {
                 return DataRepository.GetById(id);
-
             }
             catch (Exception e)
             {
@@ -46,7 +45,6 @@ namespace Api.Controllers
             try
             {
                 DataRepository.Add(todo);
-
             }
             catch (Exception e)
             {

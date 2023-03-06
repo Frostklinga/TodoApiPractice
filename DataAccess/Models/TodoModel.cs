@@ -1,4 +1,4 @@
 ﻿namespace Api.Models
 {
-    public record TodoModel(string Title, string Contents, DateTime Created, int Id);
+    public record TodoModel(string Title, string Content, DateTime Created, int Id);
 }
