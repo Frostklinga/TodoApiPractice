@@ -13,9 +13,9 @@ namespace Api.Controllers
     public class TodoController : ControllerBase
     {
         DataAccessBase DataRepository { get; set; }
-        public TodoController()
+        public TodoController(DataAccessBase datarepo)
         {
-            DataRepository = new SqlStorage(); ;
+            DataRepository = datarepo;
         }
         // GET: api/<TodoController>
         [HttpGet("GetAllTodos")]

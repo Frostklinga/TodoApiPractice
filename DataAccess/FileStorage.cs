@@ -19,7 +19,9 @@ namespace Api.DataAccess.FileRepository
         public FileStorage()
         {
             pathAndFilename = filePath + storageFileName;
-            todoList = new Dictionary<int, TodoModel>();
+            var todosFromFile = File.ReadAllText(pathAndFilename);
+            todoList = JsonConvert.DeserializeObject<Dictionary<int,TodoModel>>(todosFromFile);
+            index = todoList.Select(x => x.Key).ToList().Max();
         }
 
         void SaveToFile() 

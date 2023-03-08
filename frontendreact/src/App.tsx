@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import ReactComponent from './components/ReactComponent';
+import ExpenseItem from './components/ReactComponent';
 
 function App() {
   return (
@@ -17,10 +17,14 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
-              </a>
+            Learn React
+        </a>
         
-      <ReactComponent/>
+        <ExpenseItem
+            expenseName = "Test"
+            amount = '1.00'
+        />  
+
           </header>
     </div>
   );
