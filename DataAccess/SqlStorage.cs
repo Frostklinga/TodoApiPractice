@@ -1,5 +1,4 @@
-﻿using Api.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +8,10 @@ using System.Runtime.CompilerServices;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Data.Common;
+using System.Collections;
+using DataAccess.Models;
 
-namespace Api.DataAccess.SqlRepository
+namespace DataAccess.SqlStorage
 {
     public class SqlStorage : DataAccessBase
     {
@@ -38,7 +39,7 @@ namespace Api.DataAccess.SqlRepository
                 throw;
             }
         }
-        
+
         public override void Add(TodoModel todo)
         {
             string insertTodoItemIntoSqlDatabase = "INSERT INTO todos (Title, Content, Created) ";
@@ -51,9 +52,9 @@ namespace Api.DataAccess.SqlRepository
             string commandText = insertTodoItemIntoSqlDatabase + values;
             try
             {
-                SqlCommand insert = new SqlCommand($"{insertTodoItemIntoSqlDatabase} {values}",sqlConnection);
+                SqlCommand insert = new SqlCommand($"{insertTodoItemIntoSqlDatabase} {values}", sqlConnection);
                 var rowsAffected = insert.ExecuteNonQuery();
-            }            
+            }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
@@ -68,7 +69,7 @@ namespace Api.DataAccess.SqlRepository
                                 WHERE 
                                     ID = {todo.Id}
                             """;
-            SqlCommand deleteFromTodosWhere = new SqlCommand(deleteTodoItemFromSqlDatabase,sqlConnection);
+            SqlCommand deleteFromTodosWhere = new SqlCommand(deleteTodoItemFromSqlDatabase, sqlConnection);
             var rowsAffected = deleteFromTodosWhere.ExecuteNonQuery();
         }
 
@@ -79,22 +80,24 @@ namespace Api.DataAccess.SqlRepository
             var rowsAffected = deleteFromTodosWhere.ExecuteNonQuery();
         }
 
-        public override Dictionary<int, TodoModel> GetAllTodos()
+        public override IEnumerable<TodoModel> GetAllTodos()
         {
             string getAllTodos = $"SELECT * FROM todos;";
-            var getAllTodosSqlCommand = new SqlCommand(getAllTodos,sqlConnection);
+            var getAllTodosSqlCommand = new SqlCommand(getAllTodos, sqlConnection);
             using (var reader = getAllTodosSqlCommand.ExecuteReader())
             {
-                Dictionary<int,TodoModel> todos = new Dictionary<int,TodoModel>();
-                while (reader.Read()) 
+                //IEnumerable<TodoModel> todos = null;
+                List<TodoModel> todos = new List<TodoModel>();
+                while (reader.Read())
                 {
                     TodoModel todo = SqlDataParseHelper(reader);
-                    todos.Add(todo.Id, todo);
+                    todos.Add(todo);
                 }
+                var test = (IEnumerable<TodoModel>)todos;
                 return todos;
             }
         }
-        
+
         public override TodoModel GetById(int id)
         {
             string getTodoById = $"SELECT * FROM todos WHERE Id = {id};";
@@ -102,13 +105,13 @@ namespace Api.DataAccess.SqlRepository
             TodoModel todo = null;
             using (var reader = getTodoByIdSqlCommand.ExecuteReader())
             {
-                if(!reader.HasRows)
+                if (!reader.HasRows)
                 {
-                    
+
                 }
                 while (reader.Read())
                 {
-                    todo = SqlDataParseHelper(reader); 
+                    todo = SqlDataParseHelper(reader);
                 }
             }
             return todo;
@@ -125,12 +128,11 @@ namespace Api.DataAccess.SqlRepository
             string contentColumn = tableColumns.Select(x => x.ColumnName).Where(y => y == "Content").First();
             string createdColumn = tableColumns.Select(x => x.ColumnName).Where(y => y == "Created").First();
 
-
             var title = reader[titleColumn].ToString();
             var content = reader[contentColumn].ToString();
             DateTime.TryParse(reader[createdColumn].ToString(), out DateTime created);
-            Int32.TryParse(reader[idColumn].ToString(), out int id);
-            
+            int.TryParse(reader[idColumn].ToString(), out int id);
+
             var todo = new TodoModel(title, content, created, id);
             return todo;
         }

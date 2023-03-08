@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Api.DataAccess;
-using Api.DataAccess.FileRepository;
-using Api.DataAccess.SqlRepository;
-using Api.Models;
+
+using DataAccess.SqlStorage;
+using DataAccess.FileStorage;
 using System.Diagnostics;
+using DataAccess;
+using DataAccess.Models;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Api.Controllers
@@ -19,10 +20,10 @@ namespace Api.Controllers
         }
         // GET: api/<TodoController>
         [HttpGet("GetAllTodos")]
-        public Dictionary<int,TodoModel> Get()
+        //public Dictionary<int,TodoModel> Get()
+        public IEnumerable<TodoModel> Get()
         {
-            var todos = DataRepository.GetAllTodos();
-            return todos;
+            return DataRepository.GetAllTodos();
         }
 
         // GET api/<TodoController>/5

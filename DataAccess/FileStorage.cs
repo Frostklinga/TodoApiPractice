@@ -1,28 +1,31 @@
-﻿using Api.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
+using DataAccess.Models;
+using DataAccess;
 
-namespace Api.DataAccess.FileRepository
+namespace DataAccess.FileStorage
 {
     public class FileStorage : DataAccessBase
     {
         readonly string filePath = @".\";
         readonly string storageFileName = "datastore.json";
         readonly string pathAndFilename;
-        Dictionary<int,TodoModel> todoList;
+        IEnumerable<TodoModel> todoList;
         int index = 0;
         public FileStorage()
         {
             pathAndFilename = filePath + storageFileName;
-            todoList = new Dictionary<int, TodoModel>();
+            var todosFromFile = File.ReadAllText(pathAndFilename);
+            todoList = JsonConvert.DeserializeObject<IEnumerable<TodoModel>>(todosFromFile);
+            index = todoList.Select(x => x.Id).ToList().Max();
         }
 
-        void SaveToFile() 
+        void SaveToFile()
         {
             var todosAsJson = JsonConvert.SerializeObject(todoList, Formatting.Indented);
             File.WriteAllText(pathAndFilename, todosAsJson);
@@ -30,12 +33,13 @@ namespace Api.DataAccess.FileRepository
         public override void Add(TodoModel todo)
         {
             index++;
-            todoList.Add(index, todo);
+            todoList.Append(todo);
             SaveToFile();
         }
         public override void Delete(TodoModel todo)
         {
-            todoList.Remove(todo.Id);
+            var removedTodo = todoList.Select(x => x).Where(x => x.Id != todo.Id);
+            todoList = removedTodo;
             SaveToFile();
         }
         public override void DeleteAll()
@@ -43,17 +47,20 @@ namespace Api.DataAccess.FileRepository
             File.Delete(pathAndFilename);
             File.Create(pathAndFilename);
         }
-        public override Dictionary<int, TodoModel> GetAllTodos()
+        public override IEnumerable<TodoModel> GetAllTodos()
         {
             return todoList;
         }
         public override TodoModel GetById(int id)
         {
-            return todoList[id];
+            return todoList.Single(x => x.Id == id);
         }
         public override void Update(TodoModel todo)
         {
-            todoList[todo.Id] = todo;
+            var id = todo.Id;
+            IEnumerable<TodoModel> removedTodoList = todoList.Select(x => x).Where(x => x.Id != id);
+            removedTodoList.Append(todo);
+            SaveToFile();
         }
     }
 }
